@@ -48,6 +48,32 @@ while [[ "$#" -gt 0 ]]; do
 			echo "Previous version installed."
 			exit 0
 			;;
+		--sync)
+			REPOS=(
+				"/home/ritwik-pandey/scripts/setup"
+				)
+			for repo in "${REPOS[@]}"; do
+				if [ -d "$repo/.git" ]; then
+					echo "Checking $repo .."
+					cd "$repo" || continue
+					
+					git fetch origin
+
+					LOCAL=$(git rev-parse @)
+					REMOTE=$(git rev-parse @{u})
+
+					if [ "$LOCAL" != "$REMOTE" ]; then
+						echo "Updates found..."
+						git pull
+					else
+						echo "Latest version is available"
+					fi
+				else
+
+					echo "Not a git repo $repo"
+				fi
+			done
+			;;
 		*)
 			shift
 			;;

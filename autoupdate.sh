@@ -35,9 +35,17 @@ while [[ "$#" -gt 0 ]]; do
 				echo "download failed"
 				exit 1
 			}
+			cp -p "$Script_path" "$Script_path.bak"
 			chmod +x /tmp/autoupdate.new
 			mv /tmp/autoupdate.new "$Script_path"
-			echo "Success!"
+			if "$Script_path" --version > /dev/null 2>&1; then
+				echo "Updated Successfully"
+				rm -f "$Script_path.bak"
+				exit 0
+			fi
+			echo "Failed. Rolling back"
+			mv "$Script_path.bak" "$Script_path"
+			echo "Previous version installed."
 			exit 0
 			;;
 		*)
